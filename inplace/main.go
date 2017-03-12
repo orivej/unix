@@ -30,6 +30,8 @@ func main() {
 	file, err := os.Open(path)
 	e.Panic(err)
 	defer e.CloseOrPrint(file)
+	stat, err := file.Stat()
+	e.Panic(err)
 
 	tmppath := fmt.Sprintf("%s.%s~", path, uniuri.New())
 	tmpfile, err := os.Create(tmppath)
@@ -55,11 +57,16 @@ func main() {
 	switch err := err.(type) {
 	case nil:
 		code = 0
-		done = true
 	case *exec.ExitError:
 		code = 1
+		return
 	default:
 		code = 2
 		e.Panic(err)
 	}
+	err = os.Chmod(tmppath, stat.Mode())
+	e.Print(err)
+	err = os.Chtimes(tmppath, stat.ModTime(), stat.ModTime())
+	e.Print(err)
+	done = true
 }
