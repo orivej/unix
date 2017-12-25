@@ -24,6 +24,10 @@ Actions:
 - gs PATTERN REPLACEMENT
 
   Print REPLACEMENTs of PATTERN regexp matches.
+
+- r OLD NEW
+
+  Replace literal OLD with NEW.
 `
 
 func main() {

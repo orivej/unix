@@ -18,6 +18,7 @@ var ActionDefs = map[string]ActionDef{
 	"g":  {1, grep},
 	"s":  {2, sed},
 	"gs": {2, grepsed},
+	"r":  {2, replace},
 }
 
 func withPattern(pattern string, f func(*regexp.Regexp, []byte) []byte) (Action, error) {
@@ -56,4 +57,11 @@ func grepsed(args ...string) (Action, error) {
 		}
 		return output
 	})
+}
+
+func replace(args ...string) (Action, error) {
+	old, new := []byte(args[0]), []byte(args[1])
+	return func(b []byte) []byte {
+		return bytes.Replace(b, old, new, -1)
+	}, nil
 }
