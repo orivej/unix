@@ -21,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var code int
+	code := 2
 	defer func() {
 		os.Exit(code)
 	}()
@@ -61,7 +61,6 @@ func main() {
 		code = 1
 		return
 	default:
-		code = 2
 		e.Panic(err)
 	}
 	err = os.Chmod(tmppath, stat.Mode())
