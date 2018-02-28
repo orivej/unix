@@ -9,6 +9,10 @@ import (
 	"github.com/orivej/e"
 )
 
+type UsageError string
+
+func (err UsageError) Error() string { return string(err) }
+
 var usage = `Arguments: [ACTION ARGS...]...
 
 Actions:
@@ -37,7 +41,9 @@ func main() {
 
 	actions, err := parseActions(args)
 	if err != nil {
-		log.Println(usage)
+		if _, ok := err.(UsageError); ok {
+			log.Println(usage)
+		}
 		log.Fatal(err)
 	}
 
@@ -63,11 +69,11 @@ func parseActions(args []string) (actions []Action, err error) {
 		command := next(1)[0]
 		def, ok := ActionDefs[command]
 		if !ok {
-			err = fmt.Errorf("Unknown action %q", command)
+			err = UsageError(fmt.Sprintf("Unknown action %q", command))
 			return
 		}
 		if len(args) < def.NArgs {
-			err = fmt.Errorf("%q requires %d arguments", command, def.NArgs)
+			err = UsageError(fmt.Sprintf("%q requires %d arguments", command, def.NArgs))
 			return
 		}
 
