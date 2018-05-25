@@ -3,12 +3,17 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 	"time"
 )
 
 func main() {
+	flPrec := flag.Int("p", 3, "precision")
+	flag.Parse()
+	width := *flPrec + 4
+	lineFormat := fmt.Sprintf("%%%d.%df %%%d.%df   %%s", width, *flPrec, width, *flPrec)
 	startup := time.Now()
 	previous := startup
 	scanner := bufio.NewScanner(os.Stdin)
@@ -16,7 +21,7 @@ func main() {
 	for scanner.Scan() {
 		instant := time.Now()
 		fmt.Printf(
-			"%7.3f %7.3f   %s",
+			lineFormat,
 			instant.Sub(previous).Seconds(),
 			instant.Sub(startup).Seconds(),
 			scanner.Bytes(),
