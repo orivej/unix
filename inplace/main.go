@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/cespare/diff"
 	"github.com/dchest/uniuri"
 	"github.com/orivej/e"
 )
@@ -41,7 +42,7 @@ func main() {
 	done := false
 	defer func() {
 		if done {
-			err = os.Rename(tmppath, path)
+			err = rename(tmppath, path)
 			e.Panic(err)
 		} else {
 			err = os.Remove(tmppath)
@@ -65,7 +66,16 @@ func main() {
 	}
 	err = os.Chmod(tmppath, stat.Mode())
 	e.Print(err)
-	err = os.Chtimes(tmppath, stat.ModTime(), stat.ModTime())
-	e.Print(err)
 	done = true
+}
+
+func rename(src, dst string) error {
+	different, err := diff.Files(src, dst)
+	if err != nil {
+		return err
+	}
+	if different {
+		return os.Rename(src, dst)
+	}
+	return os.Remove(src)
 }
