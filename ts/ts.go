@@ -11,7 +11,9 @@ import (
 
 func main() {
 	flPrec := flag.Int("p", 3, "precision")
+	flUTC := flag.Bool("u", false, "print UTC time")
 	flag.Parse()
+
 	width := *flPrec + 4
 	lineFormat := fmt.Sprintf("%%%d.%df %%%d.%df   %%s", width, *flPrec, width, *flPrec)
 	startup := time.Now()
@@ -20,8 +22,12 @@ func main() {
 	scanner.Split(ScanLines)
 	for scanner.Scan() {
 		instant := time.Now()
+		s := lineFormat
+		if *flUTC {
+			s = instant.UTC().Format(time.RFC3339Nano) + " " + s
+		}
 		fmt.Printf(
-			lineFormat,
+			s,
 			instant.Sub(previous).Seconds(),
 			instant.Sub(startup).Seconds(),
 			scanner.Bytes(),
