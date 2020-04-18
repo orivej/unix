@@ -10,7 +10,10 @@ import (
 	"github.com/orivej/e"
 )
 
-var flVerbose = flag.Bool("v", false, "verbose")
+var (
+	flRound   = flag.Bool("r", false, "round time")
+	flVerbose = flag.Bool("v", false, "verbose")
+)
 
 func usage() {
 	fmt.Println("Arguments: [flags] duration command args...")
@@ -37,15 +40,18 @@ func main() {
 }
 
 func loop(period time.Duration, cb func()) {
-	zero := time.Unix(0, 0)
+	origin := time.Now()
+	if *flRound {
+		origin = time.Unix(0, 0)
+	}
 	for {
-		now := time.Since(zero)
+		now := time.Since(origin)
 		next := now.Round(period)
 		for next < now {
 			next += period
 		}
 		if *flVerbose {
-			fmt.Println("next:", zero.Add(next))
+			fmt.Println("next:", origin.Add(next))
 		}
 		time.Sleep(next - now)
 		cb()
