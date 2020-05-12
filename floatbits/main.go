@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/big"
 	"os"
+	"strconv"
 	"unsafe"
 )
 
@@ -16,8 +17,15 @@ func main() {
 	}
 	r, ok := new(big.Rat).SetString(os.Args[1])
 	if !ok {
-		fmt.Println("Failed to parse NUMBER:", os.Args[1])
-		os.Exit(1)
+		f, err := strconv.ParseFloat(os.Args[1], 64)
+		if err != nil {
+			fmt.Printf("Failed to parse NUMBER %v: %v\n", os.Args[1], err)
+			os.Exit(1)
+		}
+		if r.SetFloat64(f) == nil {
+			fmt.Println(os.Args[1], "is not finite")
+			os.Exit(1)
+		}
 	}
 	fmt.Println("input:", r.RatString())
 
