@@ -1,5 +1,9 @@
 A collection of small UNIX tools.
 
+## Every
+
+`every` runs a command periodically. It can snap the period boundary to a rounded grid, so that e.g. `every -r 6m cmd` runs cmd at 1:00:00, 1:06:00, 1:12:00 etc.
+
 ## Inplace
 
 `inplace` helps filter files with commands.
